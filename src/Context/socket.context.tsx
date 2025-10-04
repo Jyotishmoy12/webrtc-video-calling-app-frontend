@@ -25,6 +25,11 @@ export const SocketProvider: React.FC<Props> = ({ children }) => {
   // state variable to store the userId
   const [user, setUser] = useState<Peer>(); // new Peer user
 
+  const fetchParticipantsList = ({ roomId, participants }: { roomId: string, participants: string[] }) => {
+    console.log("fetched room participants")
+    console.log(roomId, participants)
+  }
+
   useEffect(() => {
     const userId = uuidv4()
     const newPeer = new Peer(userId)
@@ -33,9 +38,11 @@ export const SocketProvider: React.FC<Props> = ({ children }) => {
       navigate(`/room/${roomId}`)
     }
     socket.on("room-created", enterRoom); // listening to the room-created event from the server and calling the enterRoom function when the event is emitted
+
+    socket.on("get-users", fetchParticipantsList) // listening to the get-users event from the server and calling the fetchParticipantsList function when the event is emitted
   }, [])
   return (
-    <SocketContext.Provider value={{socket, user}}>
+    <SocketContext.Provider value={{ socket, user }}>
       {children}
     </SocketContext.Provider>
   );
