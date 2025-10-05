@@ -24,6 +24,12 @@ export const SocketProvider: React.FC<Props> = ({ children }) => {
 
   // state variable to store the userId
   const [user, setUser] = useState<Peer>(); // new Peer user
+  const [stream, setStream] = useState<MediaStream>();
+
+  const fetchUserFeed = async ()=>{
+   const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+   setStream(stream)
+  }
 
   const fetchParticipantsList = ({ roomId, participants }: { roomId: string, participants: string[] }) => {
     console.log("fetched room participants")
@@ -34,6 +40,7 @@ export const SocketProvider: React.FC<Props> = ({ children }) => {
     const userId = uuidv4()
     const newPeer = new Peer(userId)
     setUser(newPeer)
+    fetchUserFeed()
     const enterRoom = ({ roomId }: { roomId: string }) => {
       navigate(`/room/${roomId}`)
     }
@@ -42,7 +49,7 @@ export const SocketProvider: React.FC<Props> = ({ children }) => {
     socket.on("get-users", fetchParticipantsList) // listening to the get-users event from the server and calling the fetchParticipantsList function when the event is emitted
   }, [])
   return (
-    <SocketContext.Provider value={{ socket, user }}>
+    <SocketContext.Provider value={{ socket, user, stream }}>
       {children}
     </SocketContext.Provider>
   );

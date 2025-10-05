@@ -1,10 +1,11 @@
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../Context/socket.context";
+import UserFeedPlayer from "../components/UserFeedPlayer";
 
 const Room: React.FC = () => {
     const { id } = useParams()
-    const { socket, user } = useContext(SocketContext)
+    const { socket, user, Stream } = useContext(SocketContext)
 
     useEffect(() => {
         // emiting this event so that either creator of the room or joinee in the room
@@ -17,6 +18,7 @@ const Room: React.FC = () => {
     return (
         <div className="h-[100vh] flex items-center justify-center">
             Room: {id}
+            <UserFeedPlayer stream={Stream} />
         </div>
     );
 }
